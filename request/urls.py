@@ -1,7 +1,12 @@
 from django.urls import path
 
-from request.views import weekly_request
+import request.views as views
 
 urlpatterns = [
-    path('', view=weekly_request),
+    path('', view=views.weekly_request, name='weekly-request'),
+    path(
+        route='receive_weekly_request',
+        view=views.receive_weekly_request,
+        name='receive-weekly-request'
+    ),
 ]

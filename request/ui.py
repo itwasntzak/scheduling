@@ -1,3 +1,5 @@
+from django.urls import reverse
+from django.middleware.csrf import get_token
 
 import py_web_ui.bootstrap as bootstrap
 import py_web_ui.html as html
@@ -18,68 +20,77 @@ def submit_button():
     )
 
 
-def day_of_week_form(day):
-
-    weekday = day.strftime('%A').lower()
-    date = day.strftime('%m/%d')
-
-    label_text = '{}{}{}'.format(weekday.title(), html.br, date)
-    label = html.div(
-        html.label(
-            content=label_text,
-            to='{}Form'.format(weekday),
-            classes='form-label'
-        ),
-        classes='col-auto'
-        # classes='col-2 me-4'
-    )
-
-    availability_id = '{}Availability'.format(weekday)
-    availability = html.div(
-        html.input_tag(
-            input_type=html_strings.checkbox_field_input_type,
-            id=availability_id, name=availability_id,
-            classes='form-check-input'
-        ),
-        classes='col-1 col-sm-auto'
-        # classes='col-1'
+def token_field(request):
+    return html.input_tag(
+        input_type=html_strings.hidden_field_input_type,
+        name='csrfmiddlewaretoken',
+        value=get_token(request)
     )
 
 
-    shift_options = [
-        html.option('any', selected=True),
-        html.option('close'),
-        html.option('late'),
-        html.option('late rush'),
-        html.option('open'),
-        html.option('rush')
-    ]
-    preference = html.div(
-        html.select(
-            options=shift_options,
-            id='{}ShiftOption'.format(weekday),
-            classes='form-select'
-        ),
-        classes='col-3 col-sm-2 col-md-1'
-        # classes='col-2'
-    )
+def weekly_request_form(week, request):
 
-    note = html.div(
-        html.input_tag(
-            input_type=html_strings.text_field_input_type,
-            name='{}Note'.format(weekday),
-            classes='form-control'
-        ),
-        classes='col'
-        # classes='col-6'
-    )
+    fields = [ token_field(request) ]
 
-    form =  html.div(
-        '\n'.join([label, availability, preference, note]),
-        classes='row gx-2 mb-2 align-items-center'
-    )
+    for day in week:
+        weekday = day.strftime('%A').lower()
+        date = day.strftime('%m/%d')
+        # label
+        label_text = '{}{}{}'.format(weekday.title(), html.br, date)
+        label = html.div(
+            html.label(
+                content=label_text,
+                to='{}Form'.format(weekday),
+                classes='form-label'
+            ),
+            classes='col-auto'
+        )
+        # availability
 
-    return html.form(form, 'post', id='weeklyRequest')
+        availability = html.div(
+            html.input_tag(
+                input_type=html_strings.checkbox_field_input_type,
+                name='{}Availability'.format(weekday),
+                classes='form-check-input'
+            ),
+            classes='col-1 col-sm-auto'
+        )
+        # preference
+        shift_options = [
+            html.option('any', selected=True),
+            html.option('close'), html.option('late'),
+            html.option('late rush'), html.option('open'),
+            html.option('rush')
+        ]
+        preference = html.div(
+            html.select(
+                options=shift_options,
+                id='{}Preference'.format(weekday),
+                classes='form-select'
+            ),
+            classes='col-3 col-sm-2 col-md-1'
+        )
+        # note
+        note = html.div(
+            html.input_tag(
+                input_type=html_strings.text_field_input_type,
+                name='{}Note'.format(weekday),
+                classes='form-control'
+            ),
+            classes='col'
+        )
+
+        fields.append(html.div(
+            '\n'.join([label, availability, preference, note]),
+            classes='row gx-2 mb-2 align-items-center'
+        ))
+
+    return html.form(
+        content='\n'.join(fields),
+        method='post',
+        action=reverse('receive-weekly-request'),
+        id='weeklyRequest'
+    )
 
 
 def name_field():
