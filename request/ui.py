@@ -16,7 +16,7 @@ def submit_button():
             type='submit',
             extra_classes='btn-primary'
         ),
-        classes='text-center my-5',
+        classes='text-center my-4',
     )
 
 
@@ -46,29 +46,19 @@ def weekly_request_form(week, request):
             classes='col-auto'
         )
         # availability
-
-        availability = html.div(
-            html.input_tag(
-                input_type=html_strings.checkbox_field_input_type,
-                name='{}Availability'.format(weekday),
-                classes='form-check-input'
-            ),
-            classes='col-1 col-sm-auto'
-        )
-        # preference
         shift_options = [
             html.option('any', selected=True),
-            html.option('close'), html.option('late'),
-            html.option('late rush'), html.option('open'),
-            html.option('rush')
+            html.option('close'), html.option('off'),
+            html.option('late'), html.option('late rush'),
+            html.option('open'), html.option('rush')
         ]
-        preference = html.div(
+        availability = html.div(
             html.select(
                 options=shift_options,
-                id='{}Preference'.format(weekday),
+                name='{}Availability'.format(weekday),
                 classes='form-select'
             ),
-            classes='col-3 col-sm-2 col-md-1'
+            classes='col-auto ms-3'
         )
         # note
         note = html.div(
@@ -81,15 +71,17 @@ def weekly_request_form(week, request):
         )
 
         fields.append(html.div(
-            '\n'.join([label, availability, preference, note]),
-            classes='row gx-2 mb-2 align-items-center'
+            '\n'.join([label, availability, note]),
+            classes='row gx-2 mb-0 mx-2 mx-md-5 align-items-center'
         ))
+    # name
+    fields.append(name_field())
 
     return html.form(
         content='\n'.join(fields),
         method='post',
         action=reverse('receive-weekly-request'),
-        id='weeklyRequest'
+        id='weeklyRequest',
     )
 
 
@@ -107,15 +99,15 @@ def name_field():
             html.input_tag(
                 input_type=html_strings.text_field_input_type,
                 id='name', name='name',
-                classes='form-control'
+                classes='form-control',
+                required=True
             ),
-            classes='col'
-            # classes='col-11 col-sm-11'
+            classes='col ms-3'
         )
 
     return bootstrap.row(
         '\n'.join([label, html_input]),
-        extra_classes='gx-1 mt-3 mb-3'
+        extra_classes='gx-2 mt-2 mx-2 mx-md-5'
     )
 
 
@@ -129,7 +121,7 @@ def week_title(date):
                     days[0].strftime('%m/%d'),
                     days[1].strftime('%m/%d')
                 ),
-                classes='my-2'),
+                classes='mt-2 mb-3'),
             size=12,
             extra_classes='text-center'
         )

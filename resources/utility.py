@@ -5,7 +5,7 @@ def week_list(date):
     monday = date - timedelta(days=date.weekday())
     week = [ monday ]
     for number in range(1, 7):
-        week.append( monday + timedelta(days=number))
+        week.append( monday + timedelta(days=number) )
     
     return week
 

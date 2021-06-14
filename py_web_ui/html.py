@@ -59,13 +59,15 @@ def div(content, classes='', style='', id='', tabindex='', role='',
     return html
 
 
-def form(content, method, action='', classes='', id=''):
+def form(content, method, action='', classes='', id='', novelidate=False):
 
     html = f'<form action="{ action }" method="{ method }"'
     if classes != '':
         html += f' classes="{classes}"'
     if id != '':
         html += f' id="{id}"'
+    if novelidate is True:
+        html += ' novelidate'
     
     html += f'>{ content }</form>\n'
 
@@ -137,8 +139,8 @@ def h5(content, classes='', id=''):
     return html
 
 
-def input_tag(input_type, classes='', id='', name='', value='', step='', min='',
-              max='', required=False):
+def input_tag(input_type, classes='', id='', name='',
+              value='', step='', min='', max='', required=False):
 
     html = f'<input type="{ input_type }"'
     if classes != '':
@@ -192,10 +194,12 @@ def option(content, value='', selected=False):
     return html
 
 
-def select(options, id='', classes=''):
+def select(options, id='', name='', classes=''):
     html = '<select'
     if id != '':
         html += f' id="{ id }"'
+    if name != '':
+        html += f' name="{ name }"'
     if classes != '':
         html += f' class="{ classes }"'
 

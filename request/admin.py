@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from request.models import SingleDayRequest
+
+admin.site.register(SingleDayRequest)
