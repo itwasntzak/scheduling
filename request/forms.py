@@ -10,7 +10,6 @@ class SingleDayRequestForm(ModelForm):
         fields = [
             'date',
             'availability',
-            'shift',
             'note',
             'name'
         ]
@@ -20,7 +19,7 @@ class DurationRequest(ModelForm):
     class Meta:
         model = DurationRequest
         fields = [
-            'start_time',
-            'end_time',
+            'start_date',
+            'end_date',
             'name'
         ]

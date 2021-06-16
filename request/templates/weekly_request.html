@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block body_tag %}
+<div class="row">
+  <div class="col-12 text-center">
+    <h1 class="mt-4 mb-2">
+      Schedule<br>
+      Request
+    </h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 text-center">
+    <h5 class="mt-2 mb-3">
+      Week of: {{ starting_date }} - {{ ending_date }}
+    </h5>
+  </div>
+</div>
+{% include 'weekly_request_form.html' %}
+{% endblock body_tag %}

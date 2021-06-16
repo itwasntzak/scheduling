@@ -1,0 +1,19 @@
+<form action="{% url 'receive-weekly-request' %}"
+      method="post"
+      id="weeklyRequest">
+  {% csrf_token %}
+  {% for day in week %}
+    {% include 'availablity_inputs.html' %}
+  {% endfor %}
+
+  <!-- name -->
+  {% include 'name_input.html' %}
+
+  <!-- submit button -->
+  <div class="text-center my-4">
+    <button type="submit" form="weeklyRequest" class="btn btn-primary">
+      Submit
+    </button>
+  </div>
+
+</form>

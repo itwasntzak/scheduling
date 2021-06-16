@@ -3,26 +3,30 @@ from django.urls import reverse
 from datetime import datetime, timedelta
 
 import py_web_ui.bootstrap as bootstrap
+from request.forms import SingleDayRequestForm
 from request.models import SingleDayRequest
-import request.ui as ui
 import resources.utility as utility 
 
 
 def weekly_request(request):
 
-    today = datetime.now()
-    date = today + timedelta(days=7)
+    date = datetime.now() + timedelta(days=7)
+    week = []
+    for day in utility.week_list(date):
+        week.append(
+            {
+                'weekday': day.strftime('%A').lower(),
+                'date': day.strftime('%m/%d')
+            }
+        )
 
-    body_html = [ ui.page_title() ]
-    body_html.append(ui.week_title(date))
+    context = {
+        'week': week,
+        'starting_date': utility.week_range(date)[0].strftime('%m/%d'),
+        'ending_date': utility.week_range(date)[-1].strftime('%m/%d'),
+    }
 
-    body_html.append(ui.weekly_request_form(utility.week_list(date), request))
-
-    body_html.append(ui.submit_button())
-
-    body_html = bootstrap.container('\n'.join(body_html), fluid=True)
-
-    return render(request, 'index.html', { 'body_html': body_html })
+    return render(request, 'weekly_request.html', context)
 
 
 def receive_weekly_request(request):
@@ -32,85 +36,23 @@ def receive_weekly_request(request):
     week = utility.week_list(date)
 
     if request.method == 'POST':
-        monday_info = [
-            week[0],
-            request.POST.get('mondayAvailability'),
-            request.POST.get('mondayNote')
-        ]
-        tuesday_info = [
-            week[1],
-            request.POST.get('tuesdayAvailability'),
-            request.POST.get('tuesdayNote')
-        ]
-        wednesday_info = [
-            week[2],
-            request.POST.get('wednesdayAvailability'),
-            request.POST.get('wednesdayNote')
-        ]
-        thursday_info = [
-            week[3],
-            request.POST.get('thursdayAvailability'),
-            request.POST.get('thursdayNote')
-        ]
-        friday_info = [
-            week[4],
-            request.POST.get('fridayAvailability'),
-            request.POST.get('fridayNote')
-        ]
-        saturday_info = [
-            week[5],
-            request.POST.get('saturdayAvailability'),
-            request.POST.get('saturdayNote')
-        ]
-        sunday_info = [
-            week[6],
-            request.POST.get('sundayAvailability'),
-            request.POST.get('sundayNote')
-        ]
-
-        name = request.POST.get('name')
-
-        monday = SingleDayRequest.objects.create(
-            date=monday_info[0],
-            availability=monday_info[1],
-            note=monday_info[2],
-            name=name
-        )
-        tuesday = SingleDayRequest.objects.create(
-            date=tuesday_info[0],
-            availability=tuesday_info[1],
-            note=tuesday_info[2],
-            name=name
-        )
-        wednesday = SingleDayRequest.objects.create(
-            date=wednesday_info[0],
-            availability=wednesday_info[1],
-            note=wednesday_info[2],
-            name=name
-        )
-        thursday = SingleDayRequest.objects.create(
-            date=thursday_info[0],
-            availability=thursday_info[1],
-            note=thursday_info[2],
-            name=name
-        )
-        friday = SingleDayRequest.objects.create(
-            date=friday_info[0],
-            availability=friday_info[1],
-            note=friday_info[2],
-            name=name
-        )
-        saturday = SingleDayRequest.objects.create(
-            date=saturday_info[0],
-            availability=saturday_info[1],
-            note=saturday_info[2],
-            name=name
-        )
-        sunday = SingleDayRequest.objects.create(
-            date=sunday_info[0],
-            availability=sunday_info[1],
-            note=sunday_info[2],
-            name=name
-        )
+        for day in week:
+            weekday = day.strftime('%A').lower()
+            form_data = {
+                'date': day,
+                'availability': request.POST.get(f'{ weekday }Availability'),
+                'note': request.POST.get(f'{ weekday }Note'),
+                'name': request.POST.get('name')
+            }
+            form = SingleDayRequestForm(form_data)
+            if form.is_valid():
+                SingleDayRequest.objects.create(
+                    date=form.cleaned_data['date'],
+                    availability=form.cleaned_data['availability'],
+                    note=form.cleaned_data['note'].lower(),
+                    name=form.cleaned_data['name'].lower()
+                )
+            else:
+                print(form.errors)
 
     return redirect(reverse('weekly-request'))

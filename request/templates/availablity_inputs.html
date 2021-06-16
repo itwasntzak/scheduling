@@ -1,0 +1,24 @@
+<div class="row gx-2 mb-0 mx-2 mx-md-5 align-items-center">
+
+  <!-- label -->
+  <div class="col-auto">
+    <label for="{{ day.weekday }}Availability" class="col-form-label">
+      {{ day.weekday|title }}<br>
+      {{ day.date }}
+    </label>
+  </div>
+
+  <!-- availability selection -->
+  <div class="col-auto ms-3">
+    {% include 'availability_select.html' %}
+  </div>
+
+  <!-- note input -->
+  <div class="col">
+    <input type="text"
+           name="{{ day.weekday }}Note"
+           id="{{ day.weekday }}Note"
+           class="form-control">
+  </div>
+
+</div>
