@@ -3,8 +3,8 @@ from django.urls import reverse
 from datetime import datetime, timedelta
 
 import py_web_ui.bootstrap as bootstrap
-from request.forms import SingleDayRequestForm
-from request.models import SingleDayRequest
+from request.forms import ScheduleRequestForm
+from request.models import ScheduleRequest
 import resources.utility as utility 
 
 
@@ -44,9 +44,9 @@ def receive_weekly_request(request):
                 'note': request.POST.get(f'{ weekday }Note'),
                 'name': request.POST.get('name')
             }
-            form = SingleDayRequestForm(form_data)
+            form = ScheduleRequestForm(form_data)
             if form.is_valid():
-                SingleDayRequest.objects.create(
+                ScheduleRequest.objects.create(
                     date=form.cleaned_data['date'],
                     availability=form.cleaned_data['availability'],
                     note=form.cleaned_data['note'].lower(),

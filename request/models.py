@@ -1,6 +1,6 @@
 from django.db import models
 
-class SingleDayRequest(models.Model):
+class ScheduleRequest(models.Model):
     submition_date = models.DateTimeField(auto_now_add=True)
     date = models.DateField()
     availability = models.CharField(max_length=10)
@@ -20,10 +20,3 @@ class SingleDayRequest(models.Model):
             self.name.title(),
             self.availability.title(),
         )
-
-
-class DurationRequest(models.Model):
-    submition_date = models.DateTimeField(auto_now_add=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    name = models.CharField(max_length=50)

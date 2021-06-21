@@ -1,25 +1,15 @@
 from django.db.models import fields
 from django.forms import ModelForm
 
-from request.models import SingleDayRequest, DurationRequest
+from request.models import ScheduleRequest
 
 
-class SingleDayRequestForm(ModelForm):
+class ScheduleRequestForm(ModelForm):
     class Meta:
-        model = SingleDayRequest
+        model = ScheduleRequest
         fields = [
             'date',
             'availability',
             'note',
-            'name'
-        ]
-
-
-class DurationRequest(ModelForm):
-    class Meta:
-        model = DurationRequest
-        fields = [
-            'start_date',
-            'end_date',
             'name'
         ]
