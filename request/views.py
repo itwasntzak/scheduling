@@ -1,35 +1,17 @@
-from django.shortcuts import redirect, render
-from django.urls import reverse
 from datetime import datetime, timedelta
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
 
-import py_web_ui.bootstrap as bootstrap
 from request.forms import ScheduleRequestForm
 from request.models import ScheduleRequest
 import resources.utility as utility 
 
 
+@login_required(
+    login_url='/user/login/',
+    redirect_field_name=''
+)
 def weekly_request(request):
-
-    date = datetime.now() + timedelta(days=7)
-    week = []
-    for day in utility.week_list(date):
-        week.append(
-            {
-                'weekday': day.strftime('%A').lower(),
-                'date': day.strftime('%m/%d')
-            }
-        )
-
-    context = {
-        'week': week,
-        'starting_date': utility.week_range(date)[0].strftime('%m/%d'),
-        'ending_date': utility.week_range(date)[-1].strftime('%m/%d'),
-    }
-
-    return render(request, 'weekly_request.html', context)
-
-
-def receive_weekly_request(request):
 
     today = datetime.now()
     date = today + timedelta(days=7)
@@ -55,4 +37,19 @@ def receive_weekly_request(request):
             else:
                 print(form.errors)
 
-    return redirect(reverse('weekly-request'))
+    week_list = []
+    for day in week:
+        week_list.append(
+            {
+                'weekday': day.strftime('%A').lower(),
+                'date': day.strftime('%m/%d')
+            }
+        )
+
+    context = {
+        'week': week_list,
+        'starting_date': utility.week_range(date)[0].strftime('%m/%d'),
+        'ending_date': utility.week_range(date)[-1].strftime('%m/%d'),
+    }
+
+    return render(request, 'weekly_request.html', context)
